@@ -8,15 +8,25 @@ import os
 import plotly.express as px
 import plotly.graph_objects as go
 
-# 경로 설정 (로컬 환경과 배포 환경 모두 대응하도록 강화)
+# 경로 설정 (배포 환경과 로컬 환경 모두 대응)
+# app.py의 위치: .../gold-silver-project/src/app.py
 CUR_DIR = os.path.dirname(os.path.abspath(__file__))
-# 1. src/app.py 기준 상위의 data 폴더 체크
-BASE_DIR = os.path.dirname(CUR_DIR)
+BASE_DIR = os.path.dirname(CUR_DIR) # gold-silver-project/
+
+# DB_PATH 설정: app.py 상위의 data 폴더
 DB_PATH = os.path.join(BASE_DIR, "data", "commodity_analysis_final.db")
 
-# 2. 만약 파일이 없다면 현재 작업 디렉토리(CWD) 기준 체크
+# 만약 파일이 없다면, 현재 실행 경로(CWD) 기준으로 한 번 더 시도
 if not os.path.exists(DB_PATH):
-    DB_PATH = os.path.join(os.getcwd(), "gold-silver-project", "data", "commodity_analysis_final.db")
+    DB_PATH = os.path.join(os.getcwd(), "data", "commodity_analysis_final.db")
+
+# 디버깅: 파일이 여전히 없을 경우를 대비해 사이드바에 경로 정보 표시 (선택 사항)
+if not os.path.exists(DB_PATH):
+    st.sidebar.error(f"❌ DB 미발견: {DB_PATH}")
+    st.sidebar.write(f"현재 작업 디렉토리: {os.getcwd()}")
+    try:
+        st.sidebar.write(f"폴더 내 파일들: {os.listdir(BASE_DIR if os.path.exists(BASE_DIR) else '.')}")
+    except: pass
 
 # 지정 업데이트 타겟 티커 5가지 및 테이블 컬럼별 맵핑
 TICKERS = ["GC=F", "SI=F", "UUP", "^TNX", "^GSPC"]
