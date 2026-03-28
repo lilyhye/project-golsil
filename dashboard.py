@@ -8,9 +8,15 @@ import os
 import plotly.express as px
 import plotly.graph_objects as go
 
-# 경로 설정 (상대 경로로 변경하여 이식성 높임)
-BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+# 경로 설정 (로컬 환경과 배포 환경 모두 대응하도록 강화)
+CUR_DIR = os.path.dirname(os.path.abspath(__file__))
+# 1. src/app.py 기준 상위의 data 폴더 체크
+BASE_DIR = os.path.dirname(CUR_DIR)
 DB_PATH = os.path.join(BASE_DIR, "data", "commodity_analysis_final.db")
+
+# 2. 만약 파일이 없다면 현재 작업 디렉토리(CWD) 기준 체크
+if not os.path.exists(DB_PATH):
+    DB_PATH = os.path.join(os.getcwd(), "gold-silver-project", "data", "commodity_analysis_final.db")
 
 # 지정 업데이트 타겟 티커 5가지 및 테이블 컬럼별 맵핑
 TICKERS = ["GC=F", "SI=F", "UUP", "^TNX", "^GSPC"]
